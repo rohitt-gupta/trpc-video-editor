@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Ad {
+  id        Int      @id @default(autoincrement())
+  adTitle   String
+  adLength  Int
+  adUrl String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  AdMarker AdMarker[]
+}
+
+model AdMarker {
+  id        Int          @id @default(autoincrement())
+  type      AdMarkerType @default(ABTEST)
+  timestamp String
+  ad        Ad           @relation(fields: [adId], references: [id])
+  adId      Int
+}
+
+enum AdMarkerType {
+  ABTEST
+  AUTO
+  STATIC
+}

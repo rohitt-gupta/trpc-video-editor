@@ -1,0 +1,12 @@
+-- CreateTable
+CREATE TABLE "Ad" (
+    "id" SERIAL NOT NULL,
+    "adTitle" TEXT NOT NULL,
+    "adLength" INTEGER NOT NULL,
+    "startTime" INTEGER NOT NULL,
+    "endTime" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Ad_pkey" PRIMARY KEY ("id")
+);
