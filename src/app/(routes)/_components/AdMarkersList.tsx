@@ -7,7 +7,6 @@ import { Trash2, WandSparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
-import { $Enums } from "@prisma/client";
 import EditAdMarkerButton from "./EditAdMarkerButton";
 
 const AdMarkersList = () => {

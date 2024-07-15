@@ -1,4 +1,3 @@
-import AreaChart from "@/components/AreaChart";
 import { Button } from "@/components/ui/button";
 import {
   ArrowUp,
@@ -14,8 +13,11 @@ import {
   Settings,
   Tv,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import React from "react";
+
+const AreaChart = dynamic(()=> import("@/components/AreaChart"), {ssr: false});
 
 const NavItemArray: { label: string; Icon: LucideIcon }[] = [
   { label: "Dashboard", Icon: House },

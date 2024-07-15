@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DialogClose,
   DialogDescription,
@@ -59,7 +61,7 @@ const ResultDialog = ({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className=" flex flex-col gap-6">
       <DialogHeader>
         <DialogTitle>A/B test results</DialogTitle>
         <DialogDescription className="font-semibold text-sm">
@@ -76,19 +78,19 @@ const ResultDialog = ({
               index === 0 && "border-[#BBF7D0] border-4"
             )}
           >
-            <div className="flex flex-row items-center gap-10">
-              <div className="flex flex-row items-center gap-4">
+            <div className="flex flex-row gap-10 items-center">
+              <div className="flex flex-row gap-4 items-center">
                 <Image alt="ad-image" src={AdImage} width={138} height={105} />
                 <div className="flex flex-col">
-                  <span className="font-bold text-[#27272A] text-base whitespace-nowrap">
+                  <span className=" whitespace-nowrap font-bold text-[#27272A] text-base">
                     {ad.adTitle}
                   </span>
                   <div className="flex flex-row items-center gap-1">
-                    <span className="font-semibold text-[#71717A] text-sm">
+                    <span className="text-sm font-semibold text-[#71717A]">
                       {new Date(ad.createdAt).toLocaleDateString()}
                     </span>
                     <DotIcon />
-                    <span className="font-semibold text-[#71717A] text-sm">
+                    <span className="text-sm font-semibold text-[#71717A]">
                       {secondsToTimeString(ad.adLength)}
                     </span>
                   </div>
@@ -118,7 +120,7 @@ const ResultDialog = ({
                 });
               }}
               variant="outline"
-              className="px-4 py-2"
+              className="py-2 px-4"
             >
               Cancel
             </Button>
@@ -127,7 +129,7 @@ const ResultDialog = ({
             <Button
               onClick={onSubmitHandler}
               type="submit"
-              className="bg-[#18181B] px-4 py-2"
+              className="py-2 px-4 bg-[#18181B]"
             >
               Done
             </Button>

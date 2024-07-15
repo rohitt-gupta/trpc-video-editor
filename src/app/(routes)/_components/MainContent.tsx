@@ -1,9 +1,10 @@
 import { DotIcon, MoveLeft } from "lucide-react";
 import React from "react";
-import AdMarkersList from "./AdMarkersList";
 import VideoPlayer from "./VideoPlayer";
 import Image from "next/image";
 import MixerImage from "../../../../public/mixer-img.png";
+import AdMarkersList from "./AdMarkersList";
+
 
 const MainContent = () => {
   return (
