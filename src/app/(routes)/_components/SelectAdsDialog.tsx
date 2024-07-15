@@ -59,19 +59,19 @@ const AdItem = ({
     }
   };
   return (
-    <div className="rounded-md py-3 px-4 border border-[#E4E4E7] flex flex-row justify-between items-center  ">
+    <div className="flex flex-row justify-between items-center border-[#E4E4E7] px-4 py-3 border rounded-md">
       <div className="flex flex-row gap-4">
         <Image alt="ad-image" src={AdImage} width={138} height={105} />
         <div className="flex flex-col">
-          <span className=" whitespace-nowrap font-bold text-[#27272A] text-base">
+          <span className="font-bold text-[#27272A] text-base whitespace-nowrap">
             {ad.adTitle}
           </span>
           <div className="flex flex-row items-center gap-1">
-            <span className="text-sm font-semibold text-[#71717A]">
+            <span className="font-semibold text-[#71717A] text-sm">
               {new Date(ad.createdAt).toLocaleDateString()}
             </span>
             <DotIcon />
-            <span className="text-sm font-semibold text-[#71717A]">
+            <span className="font-semibold text-[#71717A] text-sm">
               {secondsToTimeString(ad.adLength)}
             </span>
           </div>
@@ -147,35 +147,35 @@ const SelectAdsDialog = ({
       <DialogHeader>
         <DialogTitle>A/B test</DialogTitle>
         <DialogDescription className="font-semibold text-sm">
-          Select which ads you'd like to A/B test
+          Select which ads you&apos;d like to A/B test
         </DialogDescription>
       </DialogHeader>
 
       <Separator />
 
       <div className="flex gap-6">
-        <div className=" bg-[#F4F4F5] p-4 flex flex-col gap-6 flex-1">
+        <div className="flex flex-col flex-1 gap-6 bg-[#F4F4F5] p-4">
           <div>
             <Input placeholder="Search Library" />
           </div>
-          <div className="flex gap-3 items-center">
+          <div className="flex items-center gap-3">
             <Library color="#52525B" />
-            <span className="text-[#27272A] font-bold text-base whitespace-nowrap">
+            <span className="font-bold text-[#27272A] text-base whitespace-nowrap">
               Ad library
             </span>
           </div>
         </div>
-        <div className="flex flex-col gap-4 flex-[3]">
+        <div className="flex flex-col flex-[3] gap-4">
           {isLoading && (
-            <div className="flex flex-col gap-4 p-8 border border-[#E4E4E7] rounded-md">
-              <span className="text-[#27272A] text-base font-bold">
+            <div className="flex flex-col gap-4 border-[#E4E4E7] p-8 border rounded-md">
+              <span className="font-bold text-[#27272A] text-base">
                 Loading ads...
               </span>
             </div>
           )}
           {!isLoading && data?.length === 0 && (
-            <div className="flex flex-col gap-4 p-8 border border-[#E4E4E7] rounded-md">
-              <span className="text-[#27272A] text-base font-bold">
+            <div className="flex flex-col gap-4 border-[#E4E4E7] p-8 border rounded-md">
+              <span className="font-bold text-[#27272A] text-base">
                 No ads found
               </span>
             </div>
@@ -187,8 +187,8 @@ const SelectAdsDialog = ({
             !isLoading &&
             data &&
             data?.length >= 2 && (
-              <div className="flex flex-row items-center gap-2 p-4 bg-[#FCA5A5] rounded-md">
-                <span className="text-[#7F1D1D] text-sm font-semibold">
+              <div className="flex flex-row items-center gap-2 bg-[#FCA5A5] p-4 rounded-md">
+                <span className="font-semibold text-[#7F1D1D] text-sm">
                   Please select at least 2 ads to continue, you have selected{" "}
                   {formData.selectedAds.length} ad
                   {formData.selectedAds.length > 1 ? "s" : ""}
@@ -214,20 +214,20 @@ const SelectAdsDialog = ({
               });
             }}
             variant="outline"
-            className="py-2 px-4"
+            className="px-4 py-2"
           >
             Cancel
           </Button>
         </DialogClose>
         <div className="flex items-center gap-4">
-          <span className="text-[#27272A] text-sm font-semibold">
+          <span className="font-semibold text-[#27272A] text-sm">
             {formData.selectedAds.length}{" "}
             {formData.selectedAds.length > 1 ? "ads" : "ad"} selected
           </span>
           <Button
             onClick={handleSelectedMarker}
             type="submit"
-            className="py-2 px-4 bg-[#18181B]"
+            className="bg-[#18181B] px-4 py-2"
           >
             Select marker
           </Button>
