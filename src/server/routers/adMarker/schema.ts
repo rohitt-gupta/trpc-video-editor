@@ -8,6 +8,13 @@ export const ZAddAdMarker = z.object({
 
 export type TAddAdMarker = z.infer<typeof ZAddAdMarker>;
 
+export const ZEditAdMarker = z.object({
+  timestamp: z.string(),
+  id: z.number(),
+});
+
+export type TEditAdMarker = z.infer<typeof ZEditAdMarker>;
+
 export const ZDeleteAdMarker = z.object({
   id: z.number(),
 });

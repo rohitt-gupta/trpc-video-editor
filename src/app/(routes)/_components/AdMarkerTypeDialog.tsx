@@ -57,7 +57,46 @@ const AdMarkerTypeDialog = ({
 
   const { toast } = useToast();
 
+  const onTimeStampChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numericValue = value.replace(/\D/g, "");
+    console.log(numericValue);
+
+    // user should not be able to enter more than 6 digits
+    if (numericValue.length > 6) {
+      return;
+    }
+
+    // i am working on input to make it work like time input so after every each 2 digits of input add a colon
+    // so it looks like a time input
+    const formattedValue = numericValue
+      .split("")
+      .map((char, index) => {
+        if (index % 2 === 0 && index !== 0) {
+          return ":" + char;
+        }
+        return char;
+      })
+      .join("");
+
+    // for valid timestamp
+
+    setFormData((prev: any) => ({
+      ...prev,
+      adMarkerTimeStamp: formattedValue,
+    }));
+  };
+
   const onSubmitHandler = () => {
+    // for valid timestamp
+    if (formData.adMarkerTimeStamp.length < 8) {
+      toast({
+        title: "Invalid timestamp",
+        description: "The timestamp you entered is invalid",
+      });
+      return;
+    }
+
     const videoLength = 596;
     const adMarkerStartTime = timeStringToSeconds(formData.adMarkerTimeStamp);
     if (adMarkerStartTime > videoLength) {
@@ -68,7 +107,7 @@ const AdMarkerTypeDialog = ({
       });
       return;
     }
-    setStep((prev : number) => prev + 1);
+    setStep((prev: number) => prev + 1);
   };
 
   return (
@@ -83,14 +122,9 @@ const AdMarkerTypeDialog = ({
         <Label htmlFor="ad-marker-title">Ad marker Timestamp</Label>
         <Input
           value={formData.adMarkerTimeStamp}
-          onChange={(e) => {
-            setFormData((prev: any) => ({
-              ...prev,
-              adMarkerTimeStamp: e.target.value,
-            }));
-          }}
+          onChange={onTimeStampChange}
           type="text"
-          placeholder="00:05:30"
+          placeholder="hh:mm:ss"
         />
       </div>
       <div>

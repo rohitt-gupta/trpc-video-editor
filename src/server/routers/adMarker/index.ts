@@ -1,7 +1,7 @@
 import { prisma } from "@/server/prisma";
 import { publicProcedure, router } from "../../trpc";
 import { TRPCError } from "@trpc/server";
-import { ZAddAdMarker, ZDeleteAdMarker } from "./schema";
+import { ZAddAdMarker, ZDeleteAdMarker, ZEditAdMarker } from "./schema";
 
 export const adMarkerRouter = router({
   getAdMarkers: publicProcedure.query(async () => {
@@ -9,14 +9,28 @@ export const adMarkerRouter = router({
     return adMarkers;
   }),
   addAdMarker: publicProcedure.input(ZAddAdMarker).mutation(async (opts) => {
-    const { type,adId, timestamp } = opts.input;
+    const { type, adId, timestamp } = opts.input;
     await prisma.adMarker.create({
-      data : {
-        adId : adId,
-        timestamp : timestamp,
-        type : type
-      }
-    })
+      data: {
+        adId: adId,
+        timestamp: timestamp,
+        type: type,
+      },
+    });
+  }),
+  editMarker: publicProcedure.input(ZEditAdMarker).mutation(async (opts) => {
+    const { id, timestamp } = opts.input;
+
+    await prisma.adMarker.update({
+      where: {
+        id: id,
+      },
+      data: {
+        timestamp: timestamp,
+      },
+    });
+
+    return true;
   }),
   deleteAdMarker: publicProcedure
     .input(ZDeleteAdMarker)

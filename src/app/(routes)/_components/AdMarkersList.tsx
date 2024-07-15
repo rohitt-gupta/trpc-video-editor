@@ -7,6 +7,8 @@ import { Trash2, WandSparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
+import { $Enums } from "@prisma/client";
+import EditAdMarkerButton from "./EditAdMarkerButton";
 
 const AdMarkersList = () => {
   const [formData, setFormData] = useState<any>({
@@ -15,19 +17,71 @@ const AdMarkersList = () => {
     selectedAds: [],
     selectedAd: "",
   });
-  const { data, isLoading, refetch, isRefetching } =
-    trpc.adMarkerRoutes.getAdMarkers.useQuery(undefined, {});
+  const { data, isLoading, isRefetching } =
+    trpc.adMarkerRoutes.getAdMarkers.useQuery();
 
-  const { mutate: deleteAdMarker, isPending: IsDeleting } =
-    trpc.adMarkerRoutes.deleteAdMarker.useMutation({
-      onSettled: () => {
-        refetch();
-      },
+  const { mutate: deleteAdMarker } =
+    trpc.adMarkerRoutes.deleteAdMarker.useMutation();
+
+  const { mutate: editAdMarker } = trpc.adMarkerRoutes.editMarker.useMutation();
+
+  const { mutate: addAdMarker } = trpc.adMarkerRoutes.addAdMarker.useMutation();
+
+  const [adMarkers, setAdMarkers] = useState<
+    | {
+        type: "AUTO" | "STATIC" | "ABTEST";
+        id: number;
+        adId: number;
+        timestamp: string;
+      }[]
+    | undefined
+  >(data);
+
+  const onAddFn = (
+    type: "AUTO" | "STATIC" | "ABTEST",
+    timestamp: string,
+    adId: number
+  ) => {
+    if (adMarkers === undefined) return;
+    const newAdMarker = {
+      type,
+      timestamp,
+      adId,
+    };
+    setAdMarkers((prev: any) => [...prev, newAdMarker]);
+    addAdMarker({
+      adId,
+      timestamp,
+      type,
     });
+  };
+
+  const onDeleteFn = (index: number, id: number) => {
+    if (adMarkers === undefined) return;
+    setAdMarkers(adMarkers.filter((_, i) => i !== index));
+    deleteAdMarker({
+      id,
+    });
+  };
+
+  const onEditFn = (index: number, id: number, timestampInput: string) => {
+    if (adMarkers === undefined) return;
+
+    setAdMarkers((prev: any) => {
+      prev[index].timestamp = timestampInput;
+      return prev;
+    });
+    editAdMarker({
+      id,
+      timestamp: timestampInput,
+    });
+  };
 
   useEffect(() => {
-    refetch();
-  }, [formData.selectedAd]);
+    if (data) {
+      setAdMarkers(data);
+    }
+  }, [data]);
 
   return (
     <div className="bg-white rounded-md flex-1 p-8 border border-[#E4E4E7] flex flex-col justify-between gap-8">
@@ -35,23 +89,31 @@ const AdMarkersList = () => {
         <div className="flex flex-row justify-between">
           <span className="text-[#27272A] text-base font-bold">Ad markers</span>
           <span className="text-[#71717A] text-base font-bold">
-            {data?.length} {data?.length === 1 ? "ad marker" : "ad markers"}
+            {isLoading || isRefetching ? (
+              "Counting ad markers"
+            ) : (
+              <>
+                {adMarkers?.length}{" "}
+                {(adMarkers === undefined || adMarkers.length === 0) && "0"}
+                {adMarkers?.length === 1 ? "ad marker" : "ad markers"}
+              </>
+            )}
           </span>
         </div>
-        {(!data || data.length === 0) && !isLoading && (
+        {(!adMarkers || adMarkers.length === 0) && !isLoading && (
           <span className="text-[#71717A] text-sm">
             No ad markers available
           </span>
         )}
-        {(isLoading || isRefetching || IsDeleting) && <span>Loading...</span>}
-        {data?.length !== 0 &&
+        {(isLoading || isRefetching) && <span>Loading...</span>}
+        {adMarkers?.length !== 0 &&
           !isRefetching &&
           !isLoading &&
-          !IsDeleting &&
-          data?.map((adMarker, index: number) => (
+          adMarkers?.map((adMarker, index: number) => (
             <AdMarkerItem
+              onDeleteFn={onDeleteFn}
+              onEditFn={onEditFn}
               index={index}
-              deleteAdMarker={deleteAdMarker}
               id={adMarker.id}
               timestamp={adMarker.timestamp}
               type={adMarker.type}
@@ -60,7 +122,11 @@ const AdMarkersList = () => {
           ))}
       </div>
       <div className="flex flex-col gap-4">
-        <CreateAdMarkerBtn formData={formData} setFormData={setFormData} />
+        <CreateAdMarkerBtn
+          formData={formData}
+          setFormData={setFormData}
+          onAddFn={onAddFn}
+        />
         <Button
           variant={"ghost"}
           className="flex flex-row items-center gap-2 border border-[#E4E4E7] bg-white w-full rounded-md font-bold text-base py-3 text-[#71717A]"
@@ -77,14 +143,16 @@ function AdMarkerItem({
   timestamp,
   type,
   id,
-  deleteAdMarker,
   index,
+  onDeleteFn,
+  onEditFn,
 }: {
   timestamp: string;
   type: "AUTO" | "STATIC" | "ABTEST";
   id: number;
-  deleteAdMarker: any;
   index: number;
+  onDeleteFn: (index: number, id: number) => void;
+  onEditFn: (index: number, id: number, timestampInput: string) => void;
 }) {
   return (
     <div className="flex flex-row items-center ">
@@ -104,17 +172,16 @@ function AdMarkerItem({
           {type}
         </span>
 
-        <Badge
-          variant={"outline"}
-          className="cursor-pointer rounded-md py-2 px-3 border border-[#E4E4E7] text-[#18181B] text-sm font-semibold hover:bg-[#f0f0f0FF]"
-        >
-          Edit
-        </Badge>
+        <EditAdMarkerButton
+          id={id}
+          timestamp={timestamp}
+          type={type}
+          onEditFn={onEditFn}
+          index={index}
+        />
         <Badge
           onClick={() => {
-            deleteAdMarker({
-              id: id,
-            });
+            onDeleteFn(index, id);
           }}
           className="bg-[#FCA5A5] cursor-pointer p-2 rounded-md text-[#7F1D1D] hover:bg-[#d18787]"
         >

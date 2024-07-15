@@ -19,9 +19,15 @@ type TFormData = {
 const CreateAdMarkerBtn = ({
   formData,
   setFormData,
+  onAddFn,
 }: {
   formData: TFormData;
-  setFormData: (formData: TFormData) => void;
+  setFormData: any;
+  onAddFn: (
+    type: "AUTO" | "STATIC" | "ABTEST",
+    timestamp: string,
+    adId: number
+  ) => void;
 }) => {
   const [step, setStep] = useState(0);
 
@@ -53,7 +59,11 @@ const CreateAdMarkerBtn = ({
           />
         )}
         {step === 3 && (
-          <ResultDialog formData={formData} setFormData={setFormData} />
+          <ResultDialog
+            formData={formData}
+            setFormData={setFormData}
+            onAddFn={onAddFn}
+          />
         )}
       </DialogContent>
     </Dialog>

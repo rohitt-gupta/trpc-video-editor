@@ -10,48 +10,51 @@ import { DotIcon } from "lucide-react";
 import Image from "next/image";
 import AdImage from "../../../../public/adImage.png";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { trpc } from "@/server/client";
+
+type TSelectedAds = {
+  id: number;
+  adTitle: string;
+  adLength: number;
+  adUrl: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type TFormData = {
+  adMarkerType: "AUTO" | "ABTEST" | "STATIC";
+  adMarkerTimeStamp: string;
+  selectedAds: TSelectedAds[];
+  selectedAd: string;
+};
 
 const ResultDialog = ({
   formData,
   setFormData,
+  onAddFn,
 }: {
-  formData: {
-    adMarkerType: "AUTO" | "ABTEST" | "STATIC";
-    adMarkerTimeStamp: string;
-    selectedAds: [];
-    selectedAd: string;
-  };
+  formData: TFormData;
   setFormData: any;
+  onAddFn: (
+    type: "AUTO" | "STATIC" | "ABTEST",
+    timestamp: string,
+    adId: number
+  ) => void;
 }) => {
-  const [resultedAds, setResultedAds] = useState<any>([
-    ...formData.selectedAds,
-  ]);
-
-  const { mutate: addAdMarker } = trpc.adMarkerRoutes.addAdMarker.useMutation({
-    onSettled: () => {
-      setFormData(() => ({
-        adMarkerType: "ABTEST",
-        selectedAds: [],
-        adMarkerTimeStamp: "",
-        selectedAd: JSON.stringify(resultedAds[0].id),
-      }));
-    },
-  });
-
-  useEffect(() => {
-    // sort the ads based on the ad length
-    setResultedAds(
-      resultedAds.sort((a: any, b: any) => a.adLength - b.adLength)
-    );
-  }, []);
+  const sortedArray = formData.selectedAds.sort(
+    (a: TSelectedAds, b: TSelectedAds) => a.adLength - b.adLength
+  );
 
   const onSubmitHandler = () => {
-    addAdMarker({
-      adId: resultedAds[0].id,
-      timestamp: formData.adMarkerTimeStamp,
-      type: formData.adMarkerType,
+    onAddFn(
+      formData.adMarkerType,
+      formData.adMarkerTimeStamp,
+      sortedArray[0].id
+    );
+    setFormData({
+      adMarkerType: "ABTEST",
+      adMarkerTimeStamp: "",
+      selectedAds: [],
+      selectedAd: "",
     });
   };
 
@@ -65,7 +68,7 @@ const ResultDialog = ({
         </DialogDescription>
       </DialogHeader>
       <div className="flex flex-col gap-4">
-        {resultedAds.map((ad: any, index: number) => (
+        {sortedArray.map((ad: TSelectedAds, index: number) => (
           <div
             key={ad.id}
             className={cn(
@@ -105,7 +108,18 @@ const ResultDialog = ({
         ))}
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" className="py-2 px-4">
+            <Button
+              onClick={() => {
+                setFormData({
+                  adMarkerType: "ABTEST",
+                  adMarkerTimeStamp: "",
+                  selectedAds: [],
+                  selectedAd: "",
+                });
+              }}
+              variant="outline"
+              className="py-2 px-4"
+            >
               Cancel
             </Button>
           </DialogClose>

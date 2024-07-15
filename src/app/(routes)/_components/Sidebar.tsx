@@ -1,3 +1,4 @@
+import AreaChart from "@/components/AreaChart";
 import { Button } from "@/components/ui/button";
 import {
   ArrowUp,
@@ -42,11 +43,12 @@ const NavItemArray: { label: string; Icon: LucideIcon }[] = [
 
 const NavItem = ({ Icon, label }: { Icon: LucideIcon; label: string }) => {
   return (
-    <Link href={"/"} className="flex flex-row gap-4 items-center cursor-pointer hover:text-black text-[#71717A]">
-      <Icon/>
-      <span className="font-bold text-2xl ">
-        {label}
-      </span>
+    <Link
+      href={"/"}
+      className="flex flex-row gap-4 items-center cursor-pointer hover:text-black text-[#71717A]"
+    >
+      <Icon />
+      <span className="font-bold text-2xl ">{label}</span>
     </Link>
   );
 };
@@ -88,6 +90,9 @@ const Sidebar = () => {
             <ArrowUp color="#16A34A" />
             <span className="text-[#71717A] font-bold text-base">17%</span>
           </div>
+        </div>
+        <div>
+          <AreaChart />
         </div>
       </div>
       <div className="flex flex-col gap-4 pl-8">

@@ -103,7 +103,9 @@ const SelectAdsDialog = ({
     selectedAd: string;
   };
 }) => {
-  const { data, isLoading } = trpc.adRoutes.getAds.useQuery();
+  const { data, isLoading } = trpc.adRoutes.getAds.useQuery(undefined, {
+    retry: false,
+  });
   const { toast } = useToast();
 
   console.log(formData.selectedAds);
@@ -111,17 +113,6 @@ const SelectAdsDialog = ({
   const handleSelectedMarker = () => {
     const videoLength = 596;
     const adMarkerStartTime = timeStringToSeconds(formData.adMarkerTimeStamp);
-
-    formData.selectedAds.forEach((ad: any) => {
-      if (adMarkerStartTime + ad.adLength > videoLength) {
-        toast({
-          title: "Choose correct ad",
-          description:
-            "Please choose a ad, which fits in the video length at the choosen timestamp",
-        });
-        return;
-      }
-    });
 
     if (formData.selectedAds.length < 2) {
       toast({
@@ -135,7 +126,20 @@ const SelectAdsDialog = ({
       return;
     }
 
-    setStep((prev: number) => prev + 1);
+    let validAds = true;
+    formData.selectedAds.forEach((ad: any) => {
+      if (adMarkerStartTime + ad.adLength > videoLength) {
+        toast({
+          title: "Choose correct ad",
+          description:
+            "Please choose a ad, which fits in the video length at the choosen timestamp",
+        });
+        validAds = false;
+        return;
+      }
+    });
+
+    if (validAds) setStep((prev: number) => prev + 1);
   };
 
   return (
@@ -201,13 +205,13 @@ const SelectAdsDialog = ({
           <Button
             onClick={() => {
               setStep((prev: number) => prev - 1);
-              setFormData(() => ({
+              setFormData({
                 // fill everything empty
                 adMarkerType: "ABTEST",
                 adMarkerTimeStamp: "",
                 selectedAds: [],
                 selectedAd: "",
-              }));
+              });
             }}
             variant="outline"
             className="py-2 px-4"
